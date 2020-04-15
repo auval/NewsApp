@@ -8,10 +8,11 @@ class NewsModel {
 
     private val webservice = NewsRestApi()
 
-    fun fetchTheNews(source: String): LiveData<NewsApiResponse?> {
-        val data = MutableLiveData<NewsApiResponse?>()
+    fun fetchTheNews(
+        source: String,
+        data: MutableLiveData<NewsApiResponse?>
+    ) {
         webservice.getNewsFromWeb(source, data)
-        return data
     }
 
 
