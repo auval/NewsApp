@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">NewsApp</string>
+    <string name="credit">Powered by NewsApi.org</string>
 </resources>

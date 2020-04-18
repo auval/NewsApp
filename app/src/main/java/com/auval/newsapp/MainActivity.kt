@@ -1,7 +1,8 @@
 package com.auval.newsapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.auval.newsapp.ui.main.MainFragment
@@ -16,13 +17,16 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             openArticlesList()
         }
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
         val viewModel = getViewModel()
+        supportActionBar?.subtitle = getString(R.string.credit)
         viewModel.observeSelectedArticle(this, Observer {
             if (it == null) {
                 // navigate to and refresh the main screen
                 openArticlesList()
                 viewModel.fetchTheNews()
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            } else {
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
             }
         })
     }
@@ -45,6 +49,13 @@ class MainActivity : AppCompatActivity() {
         } else {
             appContainer.newsModel.selectedArticleUrl.postValue(null)
         }
+    }
 
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        if (menuItem.itemId == android.R.id.home) {
+            val appContainer = (application as MainApplication).appContainer
+            appContainer.newsModel.selectedArticleUrl.postValue(null)
+        }
+        return super.onOptionsItemSelected(menuItem)
     }
 }
