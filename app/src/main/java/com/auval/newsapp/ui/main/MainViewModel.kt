@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModel
 import com.auval.newsapp.DIContainer
 import com.auval.newsapp.model.pojo.NewsApiResponse
 
+/**
+ * The constructor parameter is used for manual dependency injection
+ */
 class MainViewModel(val model: DIContainer) : ViewModel() {
 
     private val data: MutableLiveData<NewsApiResponse?> by lazy {
@@ -23,7 +26,7 @@ class MainViewModel(val model: DIContainer) : ViewModel() {
     }
 
     fun fetchTheNews() {
-        model.newsModel.fetchTheNews("cnn", data)
+        model.newsModel.fetchTheNews(model.newsModel.source, data)
     }
 
     fun onArticleSelected(articleUrl: String) {

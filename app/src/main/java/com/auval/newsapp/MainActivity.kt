@@ -5,6 +5,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.auval.newsapp.ui.main.ArticleFragment
 import com.auval.newsapp.ui.main.MainFragment
 import com.auval.newsapp.ui.main.MainViewModel
 import com.auval.newsapp.ui.main.MainViewModelFactory
@@ -23,9 +24,9 @@ class MainActivity : AppCompatActivity() {
             if (it == null) {
                 // navigate to and refresh the main screen
                 openArticlesList()
-                viewModel.fetchTheNews()
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
             } else {
+                openArticle(it)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
             }
         })
@@ -57,5 +58,13 @@ class MainActivity : AppCompatActivity() {
             appContainer.newsModel.selectedArticleUrl.postValue(null)
         }
         return super.onOptionsItemSelected(menuItem)
+    }
+
+    private fun openArticle(url: String) {
+        val httpsUrl = url.replace("http://", "https://")
+        val fragment = ArticleFragment.newInstance(httpsUrl)
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.container, fragment)
+        transaction.commit()
     }
 }

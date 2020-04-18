@@ -12,7 +12,6 @@ import com.auval.newsapp.MainApplication
 import com.auval.newsapp.R
 import com.auval.newsapp.databinding.MainFragmentBinding
 
-// todo - show credit for newsapi.org
 class MainFragment : Fragment() {
 
     companion object {
@@ -35,7 +34,6 @@ class MainFragment : Fragment() {
         val adapter = ArticlesListAdapter(viewModel, viewLifecycleOwner, context)
         binding.homeRecyclerView.adapter = adapter
         binding.homeRecyclerView.layoutManager = LinearLayoutManager(context)
-        viewModel.observeSelectedArticle(this, selectionObserver)
     }
 
     private fun getViewModel(): MainViewModel {
@@ -46,23 +44,15 @@ class MainFragment : Fragment() {
         ).get(MainViewModel::class.java)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    /**
+     * Requirement fulfilled - the refresh will be called upon:
+     * (1) app start
+     * (2) resuming from background state
+     * (3) returning to the main screen from an article
+     */
+    override fun onResume() {
+        super.onResume()
         val viewModel = getViewModel()
         viewModel.fetchTheNews()
-    }
-
-    private val selectionObserver = Observer<String?> { url ->
-        if (url != null) {
-            openArticle(url)
-        }
-    }
-
-    private fun openArticle(url: String) {
-        val httpsUrl = url.replace("http://", "https://")
-        val fragment = ArticleFragment.newInstance(httpsUrl)
-        val transaction = activity?.supportFragmentManager?.beginTransaction()
-        transaction?.replace(R.id.container, fragment)
-        transaction?.commit()
     }
 }
