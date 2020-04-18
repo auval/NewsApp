@@ -1,7 +1,6 @@
 package com.auval.newsapp.ui.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,18 +9,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.auval.newsapp.MainApplication
+import com.auval.newsapp.R
 import com.auval.newsapp.databinding.MainFragmentBinding
-import com.auval.newsapp.model.pojo.NewsApiResponse
 
 // todo - show credit for newsapi.org
 class MainFragment : Fragment() {
 
     companion object {
         fun newInstance() = MainFragment()
-        private val TAG = MainFragment::class.java.simpleName
     }
 
-//    private lateinit var viewModel: MainViewModel
     private lateinit var binding: MainFragmentBinding
 
     override fun onCreateView(
@@ -34,24 +31,38 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        val adapter = ArticlesListAdapter(viewModel, this, context)
+        val viewModel = getViewModel()
+        val adapter = ArticlesListAdapter(viewModel, viewLifecycleOwner, context)
         binding.homeRecyclerView.adapter = adapter
         binding.homeRecyclerView.layoutManager = LinearLayoutManager(context)
+        viewModel.observeSelectedArticle(this, selectionObserver)
+    }
+
+    private fun getViewModel(): MainViewModel {
+        val appContainer = (activity?.application as MainApplication).appContainer
+        return ViewModelProvider(
+            this,
+            MainViewModelFactory(appContainer)
+        ).get(MainViewModel::class.java)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        val appContainer = (activity?.application as MainApplication).appContainer
-
-//        viewModel.observeTheNews(this, newsObserver)
-        viewModel.fetchTheNews(appContainer.newsModel)
+        val viewModel = getViewModel()
+        viewModel.fetchTheNews()
     }
 
-//    val newsObserver = Observer<NewsApiResponse?> { news ->
-//        Log.i(TAG, "got ${news?.totalResults} news articles")
-//
-//    }
+    private val selectionObserver = Observer<String?> { url ->
+        if (url != null) {
+            openArticle(url)
+        }
+    }
 
+    private fun openArticle(url: String) {
+        val httpsUrl = url.replace("http://", "https://")
+        val fragment = ArticleFragment.newInstance(httpsUrl)
+        val transaction = activity?.supportFragmentManager?.beginTransaction()
+        transaction?.replace(R.id.container, fragment)
+        transaction?.commit()
+    }
 }

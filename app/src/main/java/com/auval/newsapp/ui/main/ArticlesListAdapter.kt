@@ -14,7 +14,7 @@ import com.auval.newsapp.model.pojo.NewsApiResponse
 
 class ArticlesListAdapter(
     private val viewModel: MainViewModel,
-    private val owner: LifecycleOwner,
+    owner: LifecycleOwner,
     private val context: Context?
 ) :
     RecyclerView.Adapter<ArticleViewHolder>() {

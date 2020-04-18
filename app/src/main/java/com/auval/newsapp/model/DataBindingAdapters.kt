@@ -1,4 +1,4 @@
-package com.auval.newsapp.model.pojo
+package com.auval.newsapp.model
 
 import android.widget.ImageView
 import android.widget.TextView
